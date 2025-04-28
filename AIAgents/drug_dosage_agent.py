@@ -27,8 +27,13 @@ class DrugDosageAgent:
             dosage = result[0].properties.get("dosage", "")
             return dosage
         
-        scraped_html = self.rag_client.scrape_drug_data(drug_name)
-        dosage_info = self.rag_client.extract_dosage_info(scraped_html, symptom, age_group, drug_name)
+        cached_dosage = self.rag_client.get_dosage_from_cache(drug_name.lower(), symptom.lower(), age_group.lower())
+        if cached_dosage and len(cached_dosage) >= 20 and "no dosage" not in cached_dosage.lower():
+            print(f"Retrieved dosage from scraped cache for {drug_name.lower()}.")
+            return cached_dosage
+        
+        scraped_html = self.rag_client.scraper.scrape_drug_data(drug_name)
+        dosage_info = self.rag_client.scraper.extract_dosage_info(scraped_html, symptom, age_group, drug_name)
         
         properties = {
             "drugName": drug_name.lower(),
@@ -40,6 +45,8 @@ class DrugDosageAgent:
         success = self.rag_client.insert_data("DrugDosage", properties, query_vec)
         if success:
             print(f"Stored dosage for {drug_name.lower()} in Weaviate.")
+        
+        self.rag_client.store_dosage_in_cache(drug_name.lower(), symptom.lower(), age_group.lower(), dosage_info)
         return dosage_info
 
     def extract_relevant_dosage(self, drug_name, dosage_text, weight, age):

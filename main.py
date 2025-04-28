@@ -1,8 +1,9 @@
 import time
+import hashlib
 from termcolor import colored
 from rag_client import RAGClient
-from drug_dosage_agent import DrugDosageAgent
-from drug_interaction_agent import DrugInteractionAgent
+from AIAgents.drug_dosage_agent import DrugDosageAgent
+from AIAgents.drug_interaction_agent import DrugInteractionAgent
 from utils import extract_dose_frequency, summarize_interaction
 from dotenv import load_dotenv
 import os
@@ -159,6 +160,12 @@ def generate_mitigation_plan(rag_client, dosage_agent, symptom, age, age_group, 
     drug1_interaction_summary = summarize_interaction(drug1_interactions, drug1_name_display)
     drug2_interaction_summary = summarize_interaction(drug2_interactions, drug2_name_display)
     
+    plan_key = hashlib.md5(f"{symptom}:{age}:{weight}:{drug1_name_display}:{drug2_name_display}".encode()).hexdigest()
+    cached_plan = rag_client.get_plan_from_cache(plan_key)
+    if cached_plan:
+        print(colored(f"Retrieved mitigation plan from cache for {symptom}.", "green"))
+        return cached_plan
+    
     prompt = f"""
 You are a doctor speaking to a parent. Generate a mitigation plan for a {age}-year-old ({weight or 'unknown'} kg) with {symptom}. The plan must have exactly two paragraphs separated by a single newline, each under 400 characters.
 
@@ -200,7 +207,9 @@ You are a doctor speaking to a parent. Generate a mitigation plan for a {age}-ye
                 paragraphs[1].endswith("Consult a doctor!") and
                 len(paragraphs[0]) <= 400 and len(paragraphs[1]) <= 400):
                 print(colored("Plan generated successfully.", "green"))
-                return f"Dosage Plan:\n{paragraphs[0]}\n\nInteraction Plan:\n{paragraphs[1]}"
+                final_plan = f"Dosage Plan:\n{paragraphs[0]}\n\nInteraction Plan:\n{paragraphs[1]}"
+                rag_client.store_plan_in_cache(plan_key, final_plan)
+                return final_plan
             else:
                 print(colored(f"Generated plan is invalid (paragraphs: {len(paragraphs)}), retrying...", "yellow"))
         except Exception as e:
@@ -211,7 +220,7 @@ You are a doctor speaking to a parent. Generate a mitigation plan for a {age}-ye
     
     print(colored("Using fallback plan due to generation failure.", "yellow"))
     dosage_fallback = (
-        f"Hello! For your {age}-year dotyczyold with {symptom}, give {drug1_name_display} ({drug1_dosage_concise}) or "
+        f"Hello! For your {age}-year-old with {symptom}, give {drug1_name_display} ({drug1_dosage_concise}) or "
         f"{drug2_name_display} ({drug2_dosage_concise}). Follow doctor’s advice!"
     )
     interaction_fallback = (
@@ -221,7 +230,9 @@ You are a doctor speaking to a parent. Generate a mitigation plan for a {age}-ye
         dosage_fallback = dosage_fallback[:397] + "..."
     if len(interaction_fallback) > 400:
         interaction_fallback = interaction_fallback[:397] + "..."
-    return f"Dosage Plan:\n{dosage_fallback}\n\nInteraction Plan:\n{interaction_fallback}"
+    final_plan = f"Dosage Plan:\n{dosage_fallback}\n\nInteraction Plan:\n{interaction_fallback}"
+    rag_client.store_plan_in_cache(plan_key, final_plan)
+    return final_plan
 
 if __name__ == "__main__":
     try:
