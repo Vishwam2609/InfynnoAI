@@ -10,7 +10,7 @@ A Python application that retrieves drug dosage and interaction information from
 - Generates concise mitigation plans.
 - Caches data for performance.
 - Uses Weaviate for vector storage.
-- Highly configurable via `config.py` and `collection_config.py`.
+- Highly configurable via `app_config.py` and `collection_config.py`.
 - Supports dynamic agent loading and schema management.
 - Includes logging, retry logic, and reusable components.
 
@@ -19,25 +19,32 @@ A Python application that retrieves drug dosage and interaction information from
 project/
 ├── src/
 │   ├── agents/
+│   │   ├── __init__.py
 │   │   ├── base_agent.py
 │   │   ├── drug_dosage_agent.py
 │   │   ├── drug_interaction_agent.py
+│   ├── config/
+│   │   ├── __init__.py
+│   │   ├── app_config.py
+│   │   ├── collection_config.py
 │   ├── database/
+│   │   ├── __init__.py
 │   │   ├── vector_database.py
 │   ├── scraper/
+│   │   ├── __init__.py
 │   │   ├── web_scraper.py
 │   ├── utils/
+│   │   ├── __init__.py
 │   │   ├── cache.py
 │   │   ├── config_loader.py
 │   │   ├── logging_utils.py
 │   │   ├── retry_manager.py
 │   │   ├── text_processing.py
 │   │   ├── validation.py
-│   ├── collection_config.py
-│   ├── config.py
+│   ├── __init__.py
 │   ├── main.py
 │   ├── rag_client.py
-├── Cache/ (created automatically)
+├── cache/ (created automatically)
 ├── logs/ (created automatically)
 ├── .env
 ├── README.md
@@ -81,10 +88,10 @@ project/
 - Type `yes` to exit or `no` to continue.
 
 ## Configuration
-All user-configurable settings are in `src/config.py` and `src/collection_config.py`.
+All user-configurable settings are in `src/config/app_config.py` and `src/config/collection_config.py`.
 
 ### Modifying Application Settings
-Edit `src/config.py` to change:
+Edit `src/config/app_config.py` to change:
 - **Retry settings**: Adjust `RETRY_MAX_ATTEMPTS`, `RETRY_BACKOFF_FACTOR`, `RETRY_STATUS_FORCELIST`.
 - **Cache settings**: Modify `CACHE_DIR`, `CACHE_MAX_SIZE`, `CACHE_EXPIRY_DAYS`.
 - **Logging**: Update `LOG_DIR`, `LOG_FILE`, `LOG_LEVEL`.
@@ -102,7 +109,7 @@ VALID_SYMPTOMS = set(SYMPTOM_DRUGS.keys())
 ```
 
 ### Modifying Collections and Agents
-Edit `src/collection_config.py` to change:
+Edit `src/config/collection_config.py` to change:
 - **Collection names and schemas**: Update `name` or `properties` in `COLLECTION_CONFIG`.
 - **Agent behavior**: Specify `agent`, `query_properties`, `filter_properties`, `result_property`.
 - **Scraping rules**: Define `url_template`, `extract_function`, and `params` for scraping.
@@ -137,7 +144,7 @@ COLLECTION_CONFIG = {
 ### Adding a New Agent
 1. Create a new agent in `src/agents/` (e.g., `side_effects_agent.py`):
    ```python
-   from agents.base_agent import BaseAgent
+   from src.agents.base_agent import BaseAgent
    class SideEffectsAgent(BaseAgent):
        def __init__(self, rag_client):
            super().__init__(rag_client, "SideEffects")
@@ -146,13 +153,8 @@ COLLECTION_CONFIG = {
        def process_data(self, *args, **kwargs):
            return kwargs.get("data", "No processing implemented.")
    ```
-2. Add the agent to `config.py`:
+2. Add the agent to `src/config/app_config.py`:
    ```python
    AGENT_CLASSES = {
        ...
-       "SideEffectsAgent": "agents.side_effects_agent.SideEffectsAgent"
-   }
-   ```
-3. Add a collection to `collection_config.py`:
-   ```python
-   COLLECTION
+       "SideEffectsAgent":
