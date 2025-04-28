@@ -1,0 +1,83 @@
+2025-04-28 18:00:37,716 [INFO] src.utils.logging_utils: Logging configured
+2025-04-28 18:00:37,717 [INFO] src.rag_client: Initializing vector database
+2025-04-28 18:00:37,717 [INFO] src.database.vector_database: Connecting to Weaviate...
+2025-04-28 18:00:38,163 [INFO] httpx: HTTP Request: GET https://1ql31fgntdedardfvaodxq.c0.asia-southeast1.gcp.weaviate.cloud/v1/meta "HTTP/1.1 200 OK"
+2025-04-28 18:00:38,587 [INFO] httpx: HTTP Request: GET https://pypi.org/pypi/weaviate-client/json "HTTP/1.1 200 OK"
+2025-04-28 18:00:38,722 [INFO] httpx: HTTP Request: GET https://1ql31fgntdedardfvaodxq.c0.asia-southeast1.gcp.weaviate.cloud/v1/.well-known/ready "HTTP/1.1 200 OK"
+2025-04-28 18:00:38,722 [INFO] src.database.vector_database: Connected to Weaviate successfully.
+2025-04-28 18:00:38,722 [INFO] src.rag_client: Connected to vector database
+2025-04-28 18:00:38,823 [INFO] httpx: HTTP Request: GET https://1ql31fgntdedardfvaodxq.c0.asia-southeast1.gcp.weaviate.cloud/v1/schema "HTTP/1.1 200 OK"
+2025-04-28 18:00:39,089 [INFO] httpx: HTTP Request: POST https://1ql31fgntdedardfvaodxq.c0.asia-southeast1.gcp.weaviate.cloud/v1/schema "HTTP/1.1 200 OK"
+2025-04-28 18:00:39,092 [INFO] src.database.vector_database: Created 'DrugDosage' collection.
+2025-04-28 18:00:39,361 [INFO] httpx: HTTP Request: POST https://1ql31fgntdedardfvaodxq.c0.asia-southeast1.gcp.weaviate.cloud/v1/schema "HTTP/1.1 200 OK"
+2025-04-28 18:00:39,362 [INFO] src.database.vector_database: Created 'DrugInteractions' collection.
+2025-04-28 18:00:39,362 [INFO] src.rag_client: Vector database schema ensured
+2025-04-28 18:00:39,365 [INFO] __main__: Loaded agent: DrugDosageAgent
+2025-04-28 18:00:39,365 [INFO] __main__: Loaded agent: DrugInteractionAgent
+2025-04-28 18:00:45,494 [INFO] __main__: Processing: Symptom=fever, Age=12.0, Group=pediatric, Weight=30.0 kg
+2025-04-28 18:00:45,495 [INFO] __main__: Starting processing...
+2025-04-28 18:00:46,980 [INFO] src.rag_client: Generated and cached embedding for text: acetaminophen fever pediatric...
+2025-04-28 18:00:46,986 [INFO] src.utils.cache: Saved cache to cache/embed_cache.json
+2025-04-28 18:00:46,986 [INFO] src.utils.cache: Saved cache to cache/scraped_cache.json
+2025-04-28 18:00:46,987 [INFO] src.utils.cache: Saved cache to cache/plan_cache.json
+2025-04-28 18:00:47,107 [INFO] src.rag_client: No cached data for 'acetaminophen fever pediatric' in 'DrugDosage'
+2025-04-28 18:00:47,107 [INFO] src.scraper.web_scraper: Scraping URL: https://www.drugs.com/dosage/acetaminophen.html
+2025-04-28 18:00:48,271 [INFO] src.scraper.web_scraper: Found matching section: 'Usual Pediatric Dose for Fever'
+2025-04-28 18:00:48,605 [INFO] httpx: HTTP Request: POST https://1ql31fgntdedardfvaodxq.c0.asia-southeast1.gcp.weaviate.cloud/v1/objects "HTTP/1.1 200 OK"
+2025-04-28 18:00:48,660 [INFO] src.agents.base_agent: Stored data for acetaminophen in Weaviate.
+2025-04-28 18:00:48,667 [INFO] src.utils.cache: Saved cache to cache/embed_cache.json
+2025-04-28 18:00:48,667 [INFO] src.utils.cache: Saved cache to cache/scraped_cache.json
+2025-04-28 18:00:48,667 [INFO] src.utils.cache: Saved cache to cache/plan_cache.json
+2025-04-28 18:00:48,667 [INFO] __main__: Fetched dosage for Acetaminophen
+2025-04-28 18:00:49,924 [INFO] src.rag_client: Generated and cached embedding for text: acetaminophen...
+2025-04-28 18:00:49,937 [INFO] src.utils.cache: Saved cache to cache/embed_cache.json
+2025-04-28 18:00:49,938 [INFO] src.utils.cache: Saved cache to cache/scraped_cache.json
+2025-04-28 18:00:49,939 [INFO] src.utils.cache: Saved cache to cache/plan_cache.json
+2025-04-28 18:00:50,051 [INFO] src.rag_client: No cached data for 'acetaminophen' in 'DrugInteractions'
+2025-04-28 18:00:50,052 [INFO] src.scraper.web_scraper: Scraping URL: https://www.drugs.com/food-interactions/acetaminophen.html
+2025-04-28 18:00:50,730 [INFO] httpx: HTTP Request: POST https://1ql31fgntdedardfvaodxq.c0.asia-southeast1.gcp.weaviate.cloud/v1/objects "HTTP/1.1 200 OK"
+2025-04-28 18:00:50,760 [INFO] src.agents.base_agent: Stored data for acetaminophen in Weaviate.
+2025-04-28 18:00:50,776 [INFO] src.utils.cache: Saved cache to cache/embed_cache.json
+2025-04-28 18:00:50,776 [INFO] src.utils.cache: Saved cache to cache/scraped_cache.json
+2025-04-28 18:00:50,777 [INFO] src.utils.cache: Saved cache to cache/plan_cache.json
+2025-04-28 18:00:50,777 [INFO] __main__: Fetched interactions for Acetaminophen
+2025-04-28 18:00:52,032 [INFO] src.rag_client: Generated and cached embedding for text: ibuprofen fever pediatric...
+2025-04-28 18:00:52,053 [INFO] src.utils.cache: Saved cache to cache/embed_cache.json
+2025-04-28 18:00:52,053 [INFO] src.utils.cache: Saved cache to cache/scraped_cache.json
+2025-04-28 18:00:52,053 [INFO] src.utils.cache: Saved cache to cache/plan_cache.json
+2025-04-28 18:00:52,164 [INFO] src.rag_client: No cached data for 'ibuprofen fever pediatric' in 'DrugDosage'
+2025-04-28 18:00:52,164 [INFO] src.scraper.web_scraper: Scraping URL: https://www.drugs.com/dosage/ibuprofen.html
+2025-04-28 18:00:54,045 [INFO] src.scraper.web_scraper: Found matching section: 'Usual Pediatric Dose for Fever'
+2025-04-28 18:00:54,234 [INFO] httpx: HTTP Request: POST https://1ql31fgntdedardfvaodxq.c0.asia-southeast1.gcp.weaviate.cloud/v1/objects "HTTP/1.1 200 OK"
+2025-04-28 18:00:54,253 [INFO] src.agents.base_agent: Stored data for ibuprofen in Weaviate.
+2025-04-28 18:00:54,274 [INFO] src.utils.cache: Saved cache to cache/embed_cache.json
+2025-04-28 18:00:54,274 [INFO] src.utils.cache: Saved cache to cache/scraped_cache.json
+2025-04-28 18:00:54,275 [INFO] src.utils.cache: Saved cache to cache/plan_cache.json
+2025-04-28 18:00:54,275 [INFO] __main__: Fetched dosage for Ibuprofen
+2025-04-28 18:00:55,549 [INFO] src.rag_client: Generated and cached embedding for text: ibuprofen...
+2025-04-28 18:00:55,578 [INFO] src.utils.cache: Saved cache to cache/embed_cache.json
+2025-04-28 18:00:55,579 [INFO] src.utils.cache: Saved cache to cache/scraped_cache.json
+2025-04-28 18:00:55,579 [INFO] src.utils.cache: Saved cache to cache/plan_cache.json
+2025-04-28 18:00:55,691 [INFO] src.rag_client: No cached data for 'ibuprofen' in 'DrugInteractions'
+2025-04-28 18:00:55,691 [INFO] src.scraper.web_scraper: Scraping URL: https://www.drugs.com/food-interactions/ibuprofen.html
+2025-04-28 18:00:56,518 [INFO] httpx: HTTP Request: POST https://1ql31fgntdedardfvaodxq.c0.asia-southeast1.gcp.weaviate.cloud/v1/objects "HTTP/1.1 200 OK"
+2025-04-28 18:00:56,534 [INFO] src.agents.base_agent: Stored data for ibuprofen in Weaviate.
+2025-04-28 18:00:56,562 [INFO] src.utils.cache: Saved cache to cache/embed_cache.json
+2025-04-28 18:00:56,563 [INFO] src.utils.cache: Saved cache to cache/scraped_cache.json
+2025-04-28 18:00:56,563 [INFO] src.utils.cache: Saved cache to cache/plan_cache.json
+2025-04-28 18:00:56,564 [INFO] __main__: Fetched interactions for Ibuprofen
+2025-04-28 18:00:56,564 [INFO] __main__: Generating mitigation plan
+2025-04-28 18:00:56,566 [INFO] __main__: Generating plan (attempt 1/3)
+2025-04-28 18:01:00,200 [INFO] __main__: Plan generated successfully
+2025-04-28 18:01:00,232 [INFO] src.utils.cache: Saved cache to cache/embed_cache.json
+2025-04-28 18:01:00,233 [INFO] src.utils.cache: Saved cache to cache/scraped_cache.json
+2025-04-28 18:01:00,233 [INFO] src.utils.cache: Saved cache to cache/plan_cache.json
+2025-04-28 18:01:00,233 [INFO] __main__: Processing took 14.74 seconds
+2025-04-28 18:01:18,583 [INFO] __main__: Exiting program
+2025-04-28 18:01:18,583 [INFO] src.rag_client: Cleaning up resources
+2025-04-28 18:01:18,584 [INFO] src.database.vector_database: Weaviate client closed.
+2025-04-28 18:01:18,585 [INFO] src.rag_client: Vector database connection closed
+2025-04-28 18:01:18,588 [INFO] src.rag_client: Requests session closed
+2025-04-28 18:01:18,636 [INFO] src.utils.cache: Saved cache to cache/embed_cache.json
+2025-04-28 18:01:18,637 [INFO] src.utils.cache: Saved cache to cache/scraped_cache.json
+2025-04-28 18:01:18,637 [INFO] src.utils.cache: Saved cache to cache/plan_cache.json
