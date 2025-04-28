@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 import weaviate
-from weaviate.classes.config import Configure, Property, DataType
+from weaviate.classes.config import Configure
 from weaviate.classes.init import Auth, AdditionalConfig, Timeout
 from weaviate.classes.query import Filter
 from retry_manager import RetryManager
+from collection_config import COLLECTION_CONFIG
 
 class VectorDBInterface(ABC):
     @abstractmethod
@@ -32,7 +33,7 @@ class WeaviateAdapter(VectorDBInterface):
         self.weaviate_api_key = weaviate_api_key
         self.client = None
         self.retry_manager = RetryManager(
-            max_attempts=5,  # Higher retries for vector DB operations
+            max_attempts=5,
             backoff_factor=retry_manager.backoff_factor,
             status_forcelist=retry_manager.status_forcelist
         )
@@ -60,28 +61,15 @@ class WeaviateAdapter(VectorDBInterface):
             else:
                 collection_names = [coll.name for coll in collections] if collections else []
             
-            if "DrugDosage" not in collection_names:
-                self.client.collections.create(
-                    name="DrugDosage",
-                    vectorizer_config=Configure.Vectorizer.none(),
-                    properties=[
-                        Property(name="drugName", data_type=DataType.TEXT),
-                        Property(name="symptom", data_type=DataType.TEXT),
-                        Property(name="ageGroup", data_type=DataType.TEXT),
-                        Property(name="dosage", data_type=DataType.TEXT)
-                    ]
-                )
-                print("Created 'DrugDosage' collection.")
-            if "DrugInteractions" not in collection_names:
-                self.client.collections.create(
-                    name="DrugInteractions",
-                    vectorizer_config=Configure.Vectorizer.none(),
-                    properties=[
-                        Property(name="drugName", data_type=DataType.TEXT),
-                        Property(name="interactions", data_type=DataType.TEXT)
-                    ]
-                )
-                print("Created 'DrugInteractions' collection.")
+            for config in COLLECTION_CONFIG.values():
+                collection_name = config["name"]
+                if collection_name not in collection_names:
+                    self.client.collections.create(
+                        name=collection_name,
+                        vectorizer_config=Configure.Vectorizer.none(),
+                        properties=config["properties"]
+                    )
+                    print(f"Created '{collection_name}' collection.")
         except Exception as e:
             raise Exception(f"Failed to create Weaviate schema: {e}")
 
@@ -111,7 +99,6 @@ class WeaviateAdapter(VectorDBInterface):
                 return_properties=return_properties,
                 filters=filter_obj
             ).objects
-            # Convert Weaviate result to a generic format (list of dicts)
             return [obj.properties for obj in result]
         
         return attempt_query()

@@ -6,7 +6,7 @@ from retry_manager import RetryManager
 class WebScraper:
     def __init__(self):
         self.session = requests.Session()
-        self.retry_manager = RetryManager(max_attempts=2, backoff_factor=0.2)  # 1 retry + original attempt
+        self.retry_manager = RetryManager(max_attempts=2, backoff_factor=0.2)
         self.retry_manager.configure_session(self.session)
 
     def scrape_drug_data(self, drug_name):

@@ -1,4 +1,5 @@
 from termcolor import colored
+from collection_config import COLLECTION_CONFIG
 
 class DrugInteractionAgent:
     def __init__(self, rag_client):
@@ -13,7 +14,7 @@ class DrugInteractionAgent:
         }
         
         result = self.rag_client.query_data(
-            collection_name="DrugInteractions",
+            collection_name=COLLECTION_CONFIG["DrugInteractions"]["name"],
             query_text=query_text,
             query_vec=query_vec,
             return_properties=["drugName", "interactions"],
@@ -37,7 +38,7 @@ class DrugInteractionAgent:
             "interactions": interactions_info
         }
         
-        success = self.rag_client.insert_data("DrugInteractions", properties, query_vec)
+        success = self.rag_client.insert_data(COLLECTION_CONFIG["DrugInteractions"]["name"], properties, query_vec)
         if success:
             print(f"Stored interactions for {drug_name.lower()} in Weaviate.")
         

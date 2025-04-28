@@ -7,6 +7,7 @@ import requests
 from WebScraper.web_scraper import WebScraper
 from VectorDatabase.vector_database import VectorDBInterface, WeaviateAdapter
 from retry_manager import RetryManager
+from collection_config import COLLECTION_CONFIG
 
 warnings.filterwarnings("ignore", category=DeprecationWarning, module="weaviate")
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -25,10 +26,8 @@ class RAGClient:
         os.makedirs(self.cache_dir, exist_ok=True)
         self.load_caches()
         
-        # Initialize retry manager
         self.retry_manager = RetryManager(max_attempts=3, backoff_factor=0.2)
         
-        # Initialize vector database (Weaviate for now)
         try:
             print("Initializing vector database...")
             self.vector_db = WeaviateAdapter(weaviate_url, weaviate_api_key, self.retry_manager)
@@ -160,10 +159,10 @@ class RAGClient:
             )
             if result:
                 for obj in result:
-                    if collection_name == "DrugDosage" and ("no dosage" in obj.get("dosage", "").lower() or len(obj.get("dosage", "")) < 20):
+                    if collection_name == COLLECTION_CONFIG["DrugDosage"]["name"] and ("no dosage" in obj.get("dosage", "").lower() or len(obj.get("dosage", "")) < 20):
                         print(f"Invalid cached dosage for {query_text}, fetching from website.")
                         return []
-                    if collection_name == "DrugInteractions" and len(obj.get("interactions", "")) < 20:
+                    if collection_name == COLLECTION_CONFIG["DrugInteractions"]["name"] and len(obj.get("interactions", "")) < 20:
                         print(f"Invalid cached interactions for {query_text}, fetching from website.")
                         return []
                 print(f"Queried data from vector database collection '{collection_name}' (cached).")
