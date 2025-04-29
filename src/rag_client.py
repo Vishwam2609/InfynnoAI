@@ -7,7 +7,8 @@ import warnings
 import requests
 import logging
 from src.scraper.web_scraper import WebScraper
-from src.database.vector_database import VectorDBInterface, WeaviateAdapter
+from src.database.vector_database import VectorDBInterface
+from src.database.weaviate_adapter import WeaviateAdapter
 from src.utils.retry_manager import RetryManager
 from src.utils.cache import LRUCache
 from src.utils.config_loader import ConfigLoader

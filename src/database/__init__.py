@@ -1,1 +1,2 @@
-# Empty __init__.py to make database a package
+from .vector_database import VectorDBInterface
+from .weaviate_adapter import WeaviateAdapter
